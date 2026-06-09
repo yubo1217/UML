@@ -1,6 +1,80 @@
 # Small-C 互動式解譯器
 
-**課程：** 系統程式｜**學期：** Spring 2026｜**作者：** 林煜博
+**課程：** 物件導向軟體設計｜**學期：** Spring 2026｜**作者：** 林煜博
+
+---
+
+## 專案 UML 文件說明
+
+本專案以 Small-C 互動式解譯器為標的，運用多種 UML 圖型對系統進行完整的物件導向分析與設計，涵蓋使用案例圖、使用案例描述、活動圖、類別圖與詞彙表，共五大類別。
+
+### 使用案例圖（Use Case Diagram）
+
+共 8 張，對應系統的 8 個功能面向，描述使用者或開發者與系統之間的互動關係，並以 `<<include>>` 與 `<<extend>>` 標示用例間的依賴與條件延伸。
+
+| 編號 | 檔案 | 涵蓋內容 |
+|------|------|---------|
+| UC01 | `uc_01_repl_overview.png` | REPL 系統總覽：管理程式碼輸入、執行程式、語法檢查、查詢系統資訊、離開系統、TRACE 追蹤 |
+| UC02 | `uc_02_program_input.png` | 程式碼輸入管理：直接輸入、LOAD 載入檔案、APPEND 附加、NEW 清空、SAVE 儲存 |
+| UC03 | `uc_03_buffer_edit.png` | 緩衝區編輯：LIST 顯示、EDIT 修改行、DELETE 刪除行、INSERT 插入行、CLEAR 清除畫面 |
+| UC04 | `uc_04_execution.png` | 程式執行：RUN 執行、CHECK 語法檢查、語法解析、AST 走訪執行、TRACE 追蹤、執行期錯誤回報 |
+| UC05 | `uc_05_query.png` | 系統查詢：VARS 查看變數、FUNCS 查看函式、ABOUT 系統資訊、HELP 說明 |
+| UC06 | `uc_06_language_data.png` | 語言資料宣告：int / char / 指標 / 陣列宣告，含記憶體配置與初始化 |
+| UC07 | `uc_07_control_flow.png` | 控制流程：if/else、while、for、do-while、switch 多路分支、break/continue |
+| UC08 | `uc_08_functions.png` | 函式呼叫：使用者定義函式、內建函式分派、引數傳遞、遞迴呼叫 |
+
+### 使用案例描述（Use Case Description）
+
+共 8 個使用案例，每個案例包含 3 張描述表：**正常流程**（normal）、**例外流程一**（ex1）、**例外流程二**（ex2），以結構化表格呈現前置條件、主要流程步驟、替代流程與後置條件。
+
+| 編號 | 資料夾 | 涵蓋內容 |
+|------|--------|---------|
+| UCD01 | `ucd_01/` | REPL 主迴圈的啟動、指令分派、正常結束與例外處理 |
+| UCD02 | `ucd_02/` | 程式碼輸入管理（LOAD、APPEND、SAVE、NEW）的正常與例外流程 |
+| UCD03 | `ucd_03/` | 緩衝區行編輯（LIST、EDIT、DELETE、INSERT）的正常與例外流程 |
+| UCD04 | `ucd_04/` | 程式執行（RUN / CHECK）的完整管線流程與各類錯誤情境 |
+| UCD05 | `ucd_05/` | 系統查詢（VARS、FUNCS、HELP、ABOUT）的正常與例外流程 |
+| UCD06 | `ucd_06/` | 語言資料宣告（int / char / 指標 / 陣列）的正常與例外流程 |
+| UCD07 | `ucd_07/` | 控制流程語句（if、while、for、switch 等）的正常與例外流程 |
+| UCD08 | `ucd_08/` | 函式定義與呼叫（使用者函式、內建函式、遞迴）的正常與例外流程 |
+
+### 活動圖（Activity Diagram）
+
+共 8 張，與使用案例一一對應，以活動節點、決策菱形與分叉/合流描述各功能的執行流程細節。
+
+| 編號 | 檔案 | 涵蓋內容 |
+|------|------|---------|
+| AD01 | `ad_01_repl.png` | REPL 主迴圈：初始化、提示字元顯示、指令讀取、分派執行、回到提示符 |
+| AD02 | `ad_02_input.png` | 程式碼輸入：依指令類型（LOAD / APPEND / SAVE / NEW / 直接輸入）分支執行 |
+| AD03 | `ad_03_edit.png` | 緩衝區編輯：依指令類型（LIST / EDIT / DELETE / INSERT / CLEAR）分支執行 |
+| AD04 | `ad_04_exec.png` | 程式執行管線：前置處理 → 詞法分析 → 語法解析 → AST 走訪，含 TRACE 與錯誤處理分支 |
+| AD05 | `ad_05_query.png` | 系統查詢：依指令類型（VARS / FUNCS / ABOUT / HELP / TRACE）分支輸出 |
+| AD06 | `ad_06_data.png` | 資料宣告：依宣告類型（一般變數 / 陣列 / 指標）分支配置記憶體與初始化 |
+| AD07 | `ad_07_flow.png` | 控制流程：依 AST 節點類型（if / while / for / do-while / switch / break）分支執行 |
+| AD08 | `ad_08_func.png` | 函式呼叫：引數求值 → 查找使用者函式或內建分派表 → 建立作用域 → 執行 → 回傳值 |
+
+### 類別圖（Class Diagram）
+
+共 1 張（`smallc_class.png`），涵蓋系統全部模組的類別結構與依賴關係：
+
+- **`lexer.py`**：`Token`、`Lexer`，負責詞法分析與 `#define` 前置處理
+- **`parser.py`**：`AST` 抽象基底、`Expr` / `Stmt` / `Decl` 抽象層次，以及 `Number`、`BinOp`、`Call`、`VarDecl`、`ArrayDecl`、`FuncDef`、`IfStmt`、`WhileStmt`、`ForStmt`、`SwitchStmt`、`Return` 等具體節點類別；`Parser` 遞迴下降解析器
+- **`interpreter.py`**：`Interpreter` 樹狀走訪直譯器，`BreakException`、`ContinueException`、`ReturnException` 控制流程例外
+- **`symtable.py`**：`Symbol`（型別、位址、指標/陣列旗標）、`SymbolTable`（作用域堆疊）
+- **`memory.py`**：`Memory`（線性記憶體空間，bump allocator）
+- **`builtins.py`**：`Builtins`（內建函式分派表）
+- **`repl.py`**：`ReplInputCollector`（多行輸入收集）、`REPL`（互動環境主體）
+- **`main.py`**：`Main` 進入點模組
+
+### 詞彙表（Glossary）
+
+共 1 張（`glossary.png`），以結構化表格定義專案中所有重要術語，分為五大區：
+
+1. **直譯器核心技術**：Token、Lexer、preprocess()、Parser、AST、Interpreter、REPL、ReplInputCollector
+2. **記憶體與符號管理**：Memory、int32()、heap\_top（Bump Allocator）、SymbolTable、Symbol、Scope
+3. **控制流與內建功能**：BreakException、ContinueException、ReturnException、Builtins
+4. **REPL 指令集**：LOAD/RUN、CHECK、TRACE ON/OFF、VARS/FUNCS、LIST/EDIT/INSERT/DELETE/APPEND、SAVE/NEW/CLEAR、ABOUT
+5. **Small-C 支援語言特性**：#define 巨集、switch/case/default（fall-through）、複合賦值運算子、執行期錯誤處理
 
 ---
 
