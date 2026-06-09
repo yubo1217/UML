@@ -1,5 +1,7 @@
 # Small-C 互動式解譯器 UML
 
+> 主專案：[https://github.com/yubo1217/Small-C](https://github.com/yubo1217/Small-C)
+
 **課程：** 物件導向軟體設計｜**學期：** Spring 2026｜**作者：** 林煜博
 
 ---
